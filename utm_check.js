@@ -5,7 +5,7 @@ function print_result(){
     if (result.status === "not_equal_length"){
         var resultDiv = document.createElement('div');
         resultDiv.className = 'failed';
-        document.body.appendChild(resultDiv);
+        document.getElementById("content-block").appendChild(resultDiv);
         var alert_text = document.createTextNode('UTM-метки содержат разное кол-во параметров!\n');
         var count_1 = document.createTextNode('Ожидаемое кол-во элемента(ов): ' + result.expected_count +'\n');
         var count_2 = document.createTextNode('Фактическое кол-во элемента(ов): ' + result.actual_count + '\n');
@@ -19,7 +19,7 @@ function print_result(){
     else if (result.status === false){
         var resultDiv = document.createElement('div');
         resultDiv.className = 'failed';
-        document.body.appendChild(resultDiv);
+        document.getElementById("content-block").appendChild(resultDiv);
         var alert_text = document.createTextNode('UTM-метки не совпадают!\n');
         var count_1 = document.createTextNode('Ожидаемая последовательность: ' + result.expected_utms +'\n');
         var count_2 = document.createTextNode('Элементы, которые не найдены: ' + result.compare_result + '\n');
@@ -34,7 +34,7 @@ function print_result(){
     else {
         var resultDiv = document.createElement('div');
         resultDiv.className = 'success';
-        document.body.appendChild(resultDiv);
+        document.getElementById("content-block").appendChild(resultDiv);
         var alert_text = document.createTextNode(result.message);
         resultDiv.appendChild(alert_text);
     }
