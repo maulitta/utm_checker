@@ -6,28 +6,28 @@ function print_result(){
         var resultDiv = document.createElement('div');
         resultDiv.className = 'failed';
         document.getElementById("content-block").appendChild(resultDiv);
-        var alert_text = document.createTextNode('UTM-метки содержат разное кол-во параметров!\n');
-        var count_1 = document.createTextNode('Ожидаемое кол-во элемента(ов): ' + result.expected_count +'\n');
-        var count_2 = document.createTextNode('Фактическое кол-во элемента(ов): ' + result.actual_count + '\n');
+        var result_message_title = document.createTextNode('UTM-метки содержат разное кол-во параметров!\n');
+        var result_message_count_exp = document.createTextNode('Ожидаемое кол-во элемента(ов): ' + result.expected_count +'\n');
+        var result_message_count_act = document.createTextNode('Фактическое кол-во элемента(ов): ' + result.actual_count + '\n');
         var text = document.createElement('pre');
         resultDiv.appendChild(text);
-        text.appendChild(alert_text);
-        text.appendChild(count_1);
-        text.appendChild(count_2);
+        text.appendChild(result_message_title);
+        text.appendChild(result_message_count_exp);
+        text.appendChild(result_message_count_act);
     }
     //если не совпадают между собой, при одинаковом кол-ве
     else if (result.status === false){
         var resultDiv = document.createElement('div');
         resultDiv.className = 'failed';
         document.getElementById("content-block").appendChild(resultDiv);
-        var alert_text = document.createTextNode('UTM-метки не совпадают!\n');
-        var count_1 = document.createTextNode('Ожидаемая последовательность: ' + result.expected_utms +'\n');
-        var count_2 = document.createTextNode('Элементы, которые не найдены: ' + result.compare_result + '\n');
+        var result_message_title = document.createTextNode('UTM-метки не совпадают!\n');
+        var result_message_count_exp = document.createTextNode('Ожидаемая последовательность: ' + result.expected_utms +'\n');
+        var result_message_count_act = document.createTextNode('Элементы, которые не найдены: ' + result.compare_result + '\n');
         var text = document.createElement('pre');
         resultDiv.appendChild(text);
-        text.appendChild(alert_text);
-        text.appendChild(count_1);
-        text.appendChild(count_2);
+        text.appendChild(result_message_title);
+        text.appendChild(result_message_count_exp);
+        text.appendChild(result_message_count_act);
 
     }
     //если все совпадает
@@ -35,8 +35,8 @@ function print_result(){
         var resultDiv = document.createElement('div');
         resultDiv.className = 'success';
         document.getElementById("content-block").appendChild(resultDiv);
-        var alert_text = document.createTextNode(result.message);
-        resultDiv.appendChild(alert_text);
+        var result_message_title = document.createTextNode(result.message);
+        resultDiv.appendChild(result_message_title);
     }
 
 }
