@@ -1,5 +1,13 @@
+h1 {
+  font-size: 24px;
+}
+
+body {
+  background: #f7f7f7;
+}
+
 p {
-    padding:0 0 5 0;
+    margin-bottom: 10px;
 }
 
 .utm_field {
@@ -8,7 +16,7 @@ p {
 
 .failed {
   margin: 10px;
-  padding: 5px 10px;
+  padding-left: 10px;
   border: 1px solid #e9c6c6;
   border-radius: 4px;
   color: #b31e1b;
@@ -23,4 +31,23 @@ p {
   border-radius: 4px;
   color: #3c763d;
   background-color: #dff0d8;
+}
+
+div.content-block {
+  background-color: white;
+  width: 640px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  position: absolute;
+  left: 35%;
+  top:20px;
+  border-radius: 8px;
+}
+
+div.input-block {
+  margin-bottom: 10px;
+}
+
+pre {
+  font-size: 14px;
 }
