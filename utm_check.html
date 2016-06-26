@@ -1,0 +1,23 @@
+<DOCTYPE html>
+<head>
+    <title>UTM checker</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="utm_check.js"></script>
+    <link rel="stylesheet" type="text/css" href="utm_check.css">
+</head>
+<body>
+    <h2>Проверка UTM</h2>
+    <p>Вставьте в соответствующие поля UTM (без знака вопроса "?"):</p>
+    <label for="actual_utm_field">
+        Фактическая UTM:
+    </label>
+    <input type="text" name="actual_utm" id="actual_utm_field" class='utm_field'>
+    <br><br>
+    <label for="expected_utm_field">
+        Ожидаемая UTM:
+    </label>
+    <input type="text" name="expected_utm" id="expected_utm_field" class='utm_field'>
+    <br>
+    <input type="button" name="" value="Сравнить" onClick="print_result()">
+    <p>Результат проверки:</p>
+</body>
