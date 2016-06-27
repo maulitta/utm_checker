@@ -1,0 +1,50 @@
+h1 {
+  font-size: 24px;
+}
+
+body {
+  background: #f7f7f7;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+.utm-field {
+    width: 350px;
+    padding-left: 5px;
+}
+
+.failed {
+  margin: 10px;
+  padding-left: 10px;
+  border: 1px solid #e9c6c6;
+  border-radius: 4px;
+  color: #b31e1b;
+  background-color: #f0d8d8;
+}
+
+
+.success {
+  margin: 10px;
+  padding: 5px 10px;
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+  color: #3c763d;
+  background-color: #dff0d8;
+}
+
+div.content-block {
+  background-color: white;
+  width: 640px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  position: absolute;
+  left: 33%;
+  top:20px;
+  border-radius: 8px;
+}
+
+div.input-block {
+  margin-bottom: 10px;
+}
