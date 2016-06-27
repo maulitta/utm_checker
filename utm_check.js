@@ -1,53 +1,65 @@
-function print_result(){
-    result = check_utm();
+function renderItem(item, itemClass, parentItemId, message) {
+    var resultItem = document.createElement(item);
+    resultItem.className = itemClass;
+    document.getElementById(parentItemId).appendChild(resultItem);
+    if (message){
+        var result_message = document.createTextNode(message);
+        resultItem.appendChild(result_message);
+    }
+    return resultItem;
+}
+
+
+function renderTextItems(item, parentItem, message){
+    var resultItem = document.createElement(item);
+    parentItem.appendChild(resultItem);
+    var result_message = document.createTextNode(message);
+    resultItem.appendChild(result_message);
+}
+
+
+function printResult(){
+    result = checkUtm();
     elem = document.getElementById('result_area');
     //если кол-во не совпадает
     if (result.status === "not_equal_length"){
-        var resultDiv = document.createElement('div');
-        resultDiv.className = 'failed';
-        document.getElementById("content-block").appendChild(resultDiv);
-        var result_message_title = document.createTextNode('UTM-метки содержат разное кол-во параметров!\n');
-        var result_message_count_exp = document.createTextNode('Ожидаемое кол-во элемента(ов): ' + result.expected_count +'\n');
-        var result_message_count_act = document.createTextNode('Фактическое кол-во элемента(ов): ' + result.actual_count + '\n');
-        var text = document.createElement('pre');
-        resultDiv.appendChild(text);
-        text.appendChild(result_message_title);
-        text.appendChild(result_message_count_exp);
-        text.appendChild(result_message_count_act);
+        var resultDiv = renderItem('div', 'failed', 'content-block');
+        renderTextItems('div', resultDiv, 'UTM-метки содержат разное кол-во параметров!');
+        var result_message_count_exp = 'Ожидаемое кол-во элементов: ' + result.expected_count;
+        renderTextItems('div', resultDiv, result_message_count_exp);
+        var result_message_count_act = 'Фактическое кол-во элементаов: ' + result.actual_count;
+        renderTextItems('div', resultDiv, result_message_count_act);
     }
     //если не совпадают между собой, при одинаковом кол-ве
     else if (result.status === false){
-        var resultDiv = document.createElement('div');
-        resultDiv.className = 'failed';
-        document.getElementById("content-block").appendChild(resultDiv);
-        var result_message_title = document.createTextNode('UTM-метки не совпадают!\n');
-        var result_message_count_exp = document.createTextNode('Ожидаемая последовательность: ' + result.expected_utms +'\n');
-        var result_message_count_act = document.createTextNode('Элементы, которые не найдены: ' + result.compare_result + '\n');
-        var text = document.createElement('pre');
-        resultDiv.appendChild(text);
-        text.appendChild(result_message_title);
-        text.appendChild(result_message_count_exp);
-        text.appendChild(result_message_count_act);
-
+        var resultDiv = renderItem('div', 'failed', 'content-block');
+        renderTextItems('div', resultDiv, 'UTM-метки не совпадают!');
+        var result_message_count_exp = 'Ожидаемые элменеты: ' + result.expected_utms;
+        renderTextItems('div', resultDiv, result_message_count_exp);
+        var result_message_count_act = 'Элементы, которые не найдены: ' + result.compare_result;
+        renderTextItems('div', resultDiv, result_message_count_act);
     }
     //если все совпадает
     else {
-        var resultDiv = document.createElement('div');
-        resultDiv.className = 'success';
-        document.getElementById("content-block").appendChild(resultDiv);
-        var result_message_title = document.createTextNode(result.message);
-        resultDiv.appendChild(result_message_title);
+        renderItem("div", "success", "content-block", result.message);
     }
 
 }
 
 
 //проверка на равенство UTM-ок
-function check_utm(){
+function checkUtm(){
    var utm_expected = document.getElementById('expected_utm_field').value;
    var utm_actual = document.getElementById('actual_utm_field').value;
    var expected_utms = utm_expected.split('&');
    var actual_utms = utm_actual.split('&');
+
+
+   // if (utm_expected.length && utm_actual.length === 0) {
+   //      return {
+   //          "status": 
+   //      }
+   // }
 
    if (!(expected_utms.length === actual_utms.length)){
         return {
