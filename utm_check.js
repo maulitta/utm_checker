@@ -3,19 +3,28 @@ function printResult(){
 
     if (result.status === "not_equal_length") {
         var resultDiv = renderItem('div', 'failed', 'content-block');
-        renderTextItems('div', resultDiv, 'UTM-метки содержат разное кол-во параметров!');
-        var resultMessageCountExp = 'Ожидаемое кол-во элементов: ' + result.expected_count;
-        renderTextItems('div', resultDiv, resultMessageCountExp);
-        var resultMessageCountAct = 'Фактическое кол-во элементаов: ' + result.actual_count;
-        renderTextItems('div', resultDiv, resultMessageCountAct);
+
+        var messages = ['UTM-метки содержат разное кол-во параметров!',
+                        'Ожидаемое кол-во элементов: ' + result.expected_count,
+                        'Фактическое кол-во элементаов: ' + result.actual_count
+        ]
+
+        for (var i = 0; i < messages.length; i++) {
+           renderTextItems('div', resultDiv, messages[i]);
+        }
+
 
     } else if (result.status === false) {
         var resultDiv = renderItem('div', 'failed', 'content-block');
-        renderTextItems('div', resultDiv, 'UTM-метки не совпадают!');
-        var resultMessageCountExp = 'Ожидаемые элменеты: ' + result.expected_utms;
-        renderTextItems('div', resultDiv, resultMessageCountExp);
-        var resultMessageCountAct = 'Элементы, которые не найдены: ' + result.compare_result;
-        renderTextItems('div', resultDiv, resultMessageCountAct);
+
+        var messages = ['UTM-метки не совпадают!',
+                        'Ожидаемые элменеты: ' + result.expected_utms,
+                        'Элементы, которые не найдены: ' + result.compare_result
+        ]
+        
+        for (var i = 0; i < messages.length; i++) {
+           renderTextItems('div', resultDiv, messages[i]);
+        }
 
     } else {
         renderItem("div", "success", "content-block", result.message);
