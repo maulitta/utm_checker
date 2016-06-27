@@ -48,3 +48,8 @@ div.content-block {
 div.input-block {
   margin-bottom: 10px;
 }
+
+div {
+  word-wrap: break-word;
+  padding-bottom: 2px;
+}
