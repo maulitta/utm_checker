@@ -1,6 +1,7 @@
 function printResult() {
     var itemClass = null;
     var messages = [];
+    
     clearMessages();
     result = checkUtm();
 
@@ -11,10 +12,12 @@ function printResult() {
         parentItemActual = document.getElementById('actual_block');
 
         if (result.expected_length == 0) {
+            document.getElementById('expected_utm_field').setAttribute('alert-state', 'true');
             renderTextItems('span', parentItemExpected, message, 'alert', 'exp_alert');
         }
 
         if (result.actual_length == 0) {
+            document.getElementById('actual_utm_field').setAttribute('alert-state', 'true');
             renderTextItems('span', parentItemActual, message, 'alert', 'act_alert');
         }
 
@@ -123,5 +126,15 @@ function clearMessages() {
     var actualAlertMessage = document.getElementById('act_alert');
     if (actualAlertMessage) {
         document.getElementById('actual_block').removeChild(actualAlertMessage);
+    }
+
+    expected_utm_field = document.getElementById('expected_utm_field');
+    if (expected_utm_field.getAttribute('alert-state') == 'true') {
+        expected_utm_field.setAttribute('alert-state', 'false');
+    }
+
+    actual_utm_field = document.getElementById('actual_utm_field');
+    if (actual_utm_field.getAttribute('alert-state') == 'true') {
+        actual_utm_field.setAttribute('alert-state', 'false');
     }
 }
