@@ -1,36 +1,53 @@
-function printResult(){
+function printResult() {
+    var itemClass = null;
+    var messages = [];
+    clearMessages();
     result = checkUtm();
 
-    if (result.status === "not_equal_length") {
-        var resultDiv = renderItem('div', 'failed', 'content-block');
+    if (result.status === 'empty_fields') {
+        message = 'Поле не должно быть пустым!';
+        itemClass = 'alert';
+        parentItemExpected = document.getElementById('expected_block');
+        parentItemActual = document.getElementById('actual_block');
 
-        var messages = ['UTM-метки содержат разное кол-во параметров!',
-                        'Ожидаемое кол-во элементов: ' + result.expected_count,
-                        'Фактическое кол-во элементаов: ' + result.actual_count
-        ]
-
-        for (var i = 0; i < messages.length; i++) {
-           renderTextItems('div', resultDiv, messages[i]);
+        if (result.expected_length == 0) {
+            renderTextItems('span', parentItemExpected, message, 'alert', 'exp_alert');
         }
 
-
-    } else if (result.status === false) {
-        var resultDiv = renderItem('div', 'failed', 'content-block');
-
-        var messages = ['UTM-метки не совпадают!',
-                        'Ожидаемые элменеты: ' + result.expected_utms,
-                        'Элементы, которые не найдены: ' + result.compare_result
-        ]
-        
-        for (var i = 0; i < messages.length; i++) {
-           renderTextItems('div', resultDiv, messages[i]);
+        if (result.actual_length == 0) {
+            renderTextItems('span', parentItemActual, message, 'alert', 'act_alert');
         }
 
-    } else {
-        renderItem("div", "success", "content-block", result.message);
+        return 
     }
 
+    if (result.status === 'not_equal_length') {
+        itemClass = 'failed';
+        messages = ['UTM-метки содержат разное кол-во параметров!',
+                    'Ожидаемое кол-во элементов: ' + result.expected_count,
+                    'Фактическое кол-во элементаов: ' + result.actual_count
+        ];
+
+    } 
+    if (result.status === false) {
+        itemClass = 'failed';
+        messages = ['UTM-метки не совпадают!',
+                    'Ожидаемые элменеты: ' + result.expected_utms,
+                    'Элементы, которые не найдены: ' + result.compare_result
+        ];
+
+    } 
+    if (result.status === true) {
+        itemClass = 'success';
+        messages = ['UTM-метки полностью совпадают'];
+    }
+
+    var resultDiv = renderItem('div', itemClass, 'result', 'content-block');
+    for (var i = 0; i < messages.length; i++) {
+       renderTextItems('div', resultDiv, messages[i]);
+    }
 }
+
 
 function checkUtm() {
    var utmExpected = document.getElementById('expected_utm_field').value;
@@ -38,17 +55,19 @@ function checkUtm() {
    var expectedUtms = utmExpected.split('&');
    var actualUtms = utmActual.split('&');
 
-   // if (utmExpected.length && utmActual.length === 0) {
-   //      return {
-   //          "status": 
-   //      }
-   // }
+   if (utmExpected.length == 0 || utmActual.length == 0) {
+        return {
+            'status': 'empty_fields',
+            'expected_length': utmExpected.length,
+            'actual_length': utmActual.length
+        }
+   }
 
    if (!(expectedUtms.length === actualUtms.length)) {
         return {
-            "status": "not_equal_length",
-            "expected_count": expectedUtms.length,
-            "actual_count": actualUtms.length
+            'status': 'not_equal_length',
+            'expected_count': expectedUtms.length,
+            'actual_count': actualUtms.length
         }
     }
 
@@ -60,32 +79,49 @@ function checkUtm() {
 
     if (compareResult.length === 0) {
         return {
-            "status": true,
-            "message": "UTM-метки полностью совпадают"
+            'status': true
         }
     }
 
     return {
-        "status": false,
-        "expected_utms": expectedUtms,
-        "compare_result": compareResult
+        'status': false,
+        'expected_utms': expectedUtms,
+        'compare_result': compareResult
     }
 }
 
-function renderItem(item, itemClass, parentItemId, message) {
+
+function renderItem(item, itemClass, itemId, parentItemId) {
     var resultItem = document.createElement(item);
     resultItem.className = itemClass;
+    resultItem.id = itemId;
     document.getElementById(parentItemId).appendChild(resultItem);
-
-    if (message) {
-        resultItem.appendChild(document.createTextNode(message));
-    }
-
     return resultItem;
 }
 
-function renderTextItems(item, parentItem, message) {
+
+function renderTextItems(item, parentItem, message, itemClass, itemId) {
     var resultItem = document.createElement(item);
+    resultItem.className = itemClass;
+    resultItem.id = itemId;
     parentItem.appendChild(resultItem);
     resultItem.appendChild(document.createTextNode(message));
+}
+
+
+function clearMessages() {
+    var resultDiv = document.getElementById('result');
+    if (resultDiv) {
+        document.getElementById('content-block').removeChild(resultDiv);
+    }
+
+    var expactedAlertMessage = document.getElementById('exp_alert');
+    if (expactedAlertMessage) {
+        document.getElementById('expected_block').removeChild(expactedAlertMessage);
+    }
+
+    var actualAlertMessage = document.getElementById('act_alert');
+    if (actualAlertMessage) {
+        document.getElementById('actual_block').removeChild(actualAlertMessage);
+    }
 }
