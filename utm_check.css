@@ -32,7 +32,7 @@ div {
   color: #b31e1b;
 }
 
-.utm-field {
+.utm-field[alert-state='false'] {
     display: inline-block;
     box-sizing: border-box;
     width: 100%;
@@ -43,10 +43,9 @@ div {
     font-size: 13px;
     line-height: 14px;
     vertical-align: middle;
-    /*border-color: #b00;*/
 }
 
-.utm-field alert {
+.utm-field[alert-state='true'] {
     display: inline-block;
     box-sizing: border-box;
     width: 100%;
