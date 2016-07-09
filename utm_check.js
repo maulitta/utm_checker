@@ -1,7 +1,13 @@
+function runPrintResult(e) {
+    if (e.keyCode == 13) {
+        printResult()
+    }
+}
+
 function printResult() {
     var itemClass = null;
     var messages = [];
-    
+
     clearMessages();
     result = checkUtm();
 
