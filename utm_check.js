@@ -12,19 +12,15 @@ function printResult() {
     result = checkUtm();
 
     if (result.status === 'empty_fields') {
-        message = 'Поле не должно быть пустым!';
-        itemClass = 'alert';
         parentItemExpected = document.getElementById('expected_block');
         parentItemActual = document.getElementById('actual_block');
 
         if (result.expected_length == 0) {
-            document.getElementById('expected_utm_field').setAttribute('alert-state', 'true');
-            renderTextItems('span', parentItemExpected, message, 'alert', 'exp_alert');
+            renderAlert(parentItemExpected, 'expected_utm_field', 'alert_exp');
         }
 
         if (result.actual_length == 0) {
-            document.getElementById('actual_utm_field').setAttribute('alert-state', 'true');
-            renderTextItems('span', parentItemActual, message, 'alert', 'act_alert');
+            renderAlert(parentItemActual, 'actual_utm_field', 'alert_act');
         }
 
         return 
@@ -42,6 +38,7 @@ function printResult() {
         itemClass = 'failed';
         messages = ['UTM-метки не совпадают!',
                     'Ожидаемые элменеты: ' + result.expected_utms,
+                    'Фактические элементы: ' + result.actual_utms,
                     'Элементы, которые не найдены: ' + result.compare_result
         ];
 
@@ -57,18 +54,31 @@ function printResult() {
     }
 }
 
+function getFieldValue(fieldId) {
+   var fieldValue = document.getElementById(fieldId).value;
+   if (fieldValue.length == 0) {
+        return []
+   }
+   var a = document.createElement('a');
+   a.href = fieldValue;
+   if (Boolean(a.search)) {
+        return a.search.slice(1).split('&');
+   }
+   if (fieldValue.charAt(0) == '?') {
+        fieldValue = fieldValue.slice(1);
+   }
+        return fieldValue.split('&');
+}
 
 function checkUtm() {
-   var utmExpected = document.getElementById('expected_utm_field').value;
-   var utmActual = document.getElementById('actual_utm_field').value;
-   var expectedUtms = utmExpected.split('&');
-   var actualUtms = utmActual.split('&');
+   var expectedUtms = getFieldValue('expected_utm_field');
+   var actualUtms = getFieldValue('actual_utm_field');
 
-   if (utmExpected.length == 0 || utmActual.length == 0) {
+   if (expectedUtms.length == 0 || actualUtms.length == 0) {
         return {
             'status': 'empty_fields',
-            'expected_length': utmExpected.length,
-            'actual_length': utmActual.length
+            'expected_length': expectedUtms.length,
+            'actual_length': actualUtms.length
         }
    }
 
@@ -95,10 +105,10 @@ function checkUtm() {
     return {
         'status': false,
         'expected_utms': expectedUtms,
+        'actual_utms': actualUtms,
         'compare_result': compareResult
     }
 }
-
 
 function renderItem(item, itemClass, itemId, parentItemId) {
     var resultItem = document.createElement(item);
@@ -108,7 +118,6 @@ function renderItem(item, itemClass, itemId, parentItemId) {
     return resultItem;
 }
 
-
 function renderTextItems(item, parentItem, message, itemClass, itemId) {
     var resultItem = document.createElement(item);
     resultItem.className = itemClass;
@@ -117,19 +126,18 @@ function renderTextItems(item, parentItem, message, itemClass, itemId) {
     resultItem.appendChild(document.createTextNode(message));
 }
 
-
 function clearMessages() {
     var resultDiv = document.getElementById('result');
     if (resultDiv) {
         document.getElementById('content-block').removeChild(resultDiv);
     }
 
-    var expactedAlertMessage = document.getElementById('exp_alert');
+    var expactedAlertMessage = document.getElementById('alert_exp');
     if (expactedAlertMessage) {
         document.getElementById('expected_block').removeChild(expactedAlertMessage);
     }
 
-    var actualAlertMessage = document.getElementById('act_alert');
+    var actualAlertMessage = document.getElementById('alert_act');
     if (actualAlertMessage) {
         document.getElementById('actual_block').removeChild(actualAlertMessage);
     }
@@ -143,4 +151,12 @@ function clearMessages() {
     if (actual_utm_field.getAttribute('alert-state') == 'true') {
         actual_utm_field.setAttribute('alert-state', 'false');
     }
+}
+
+function renderAlert(parentItem, inputId, alertId) {
+    message = 'Поле не должно быть пустым!';
+    itemClass = 'alert';
+    document.getElementById(inputId).setAttribute('alert-state', 'true');
+    renderTextItems('span', parentItem, message, itemClass, alertId);
+
 }
