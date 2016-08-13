@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <head>
-    <title>UTM checker</title>
+    <title>Params checker</title>
     <meta charset="utf-8">
     <script type="text/javascript" src="utm_check.js"></script>
     <link rel="stylesheet" type="text/css" href="utm_check.css">
 </head>
 <body>
     <div class="content-block" id="content-block">
-        <h1>Проверка UTM</h1>
-        <p>Вставьте UTM в соответствующие поля (без знака вопроса "?"):</p>
+        <h1>Проверка get-параметров</h1>
         <div class="input-block" id='expected_block'>
-            <span>
-                Ожидаемая UTM:
-            </span>
+            <p class='title'>
+                Ожидаемый набор get-параметров:
+            </p>
             <input type="text" id="expected_utm_field" class='utm-field' alert-state='false' autofocus>
         </div>
         <div class="input-block" id='actual_block'>
-            <span>
-                Фактическая UTM:
-            </span>
+            <p class='title'>
+                Фактическая набор get-параметров:
+            </p>
             <input type="text" id="actual_utm_field" class='utm-field' alert-state='false' onkeypress='runPrintResult(event)'>
         </div>
         <input type="button" name="" value="Сравнить" onClick="printResult()">
