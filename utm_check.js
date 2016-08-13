@@ -5,58 +5,65 @@ function runPrintResult(e) {
 }
 
 function printResult() {
-    var itemClass = null;
-    var messages = [];
+    var itemClass = 'successed';
+    var messages = ['GET-параметры полностью совпадают!'];
 
     clearMessages();
-    result = checkUtm();
+    var expectedUtms = getFieldValue('expected_utm_field', 'expected_block');
+    var actualUtms = getFieldValue('actual_utm_field', 'actual_block');
+    result = checkArrays(expectedUtms, actualUtms);
 
-    if (result.status === 'empty_fields') {
-        parentItemExpected = document.getElementById('expected_block');
-        parentItemActual = document.getElementById('actual_block');
-
-        if (result.expected_length == 0) {
-            renderAlert(parentItemExpected, 'expected_utm_field', 'alert_exp');
-        }
-
-        if (result.actual_length == 0) {
-            renderAlert(parentItemActual, 'actual_utm_field', 'alert_act');
-        }
-
-        return 
-    }
+    if (result.status === 'emtpy') return;
 
     if (result.status === 'not_equal_length') {
         itemClass = 'failed';
-        messages = ['UTM-метки содержат разное кол-во параметров!',
-                    'Ожидаемое кол-во элементов: ' + result.expected_count,
-                    'Фактическое кол-во элементаов: ' + result.actual_count
+        messages = ['GET-параметры не совпадают по длинне!',
+                    'Ожидаемое кол-во элементов: ' + expectedUtms.length,
+                    'Фактическое кол-во элементаов: ' + actualUtms.length
         ];
+    }
 
-    } 
     if (result.status === false) {
         itemClass = 'failed';
-        messages = ['UTM-метки не совпадают!',
-                    'Ожидаемые элменеты: ' + result.expected_utms,
-                    'Фактические элементы: ' + result.actual_utms,
-                    'Элементы, которые не найдены: ' + result.compare_result
-        ];
+        messages = ['GET-параметры не совпадают!'];
+    }
 
-    } 
-    if (result.status === true) {
-        itemClass = 'success';
-        messages = ['UTM-метки полностью совпадают'];
+    if (result.notInExpectedList.length != 0) {
+        messages.push('Фактический набор не должен содержать элементы: ' + result.notInExpectedList.sort());
+    }
+    if (result.notInActualList.length != 0) {
+        messages.push('Элементы, которые отсутствуют: ' + result.notInActualList.sort());
     }
 
     var resultDiv = renderItem('div', itemClass, 'result', 'content-block');
     for (var i = 0; i < messages.length; i++) {
-       renderTextItems('div', resultDiv, messages[i]);
+        renderTextItems('div', resultDiv, messages[i]);
+    }
+
+    renderTextItems('div', resultDiv, 'Ожидаемая последовательность: ');
+    for (var i = 0; i < expectedUtms.length; i++) {
+        let className = 'success';
+        if (result.notInActualList.includes(expectedUtms[i])) {
+            className = 'suspect'
+        }
+        renderTextItems('mark', resultDiv, expectedUtms[i] + ', ', className);
+    }
+
+    renderTextItems('div', resultDiv, 'Фактическая последовательность: ');
+    for (var i = 0; i < actualUtms.length; i++) {
+        let className = 'success';
+        if (result.notInExpectedList.includes(actualUtms[i])) {
+            className = 'fail'
+        }
+        renderTextItems('mark', resultDiv, actualUtms[i] + ', ', className);
     }
 }
 
-function getFieldValue(fieldId) {
+function getFieldValue(fieldId, parentFieldId) {
    var fieldValue = document.getElementById(fieldId).value;
+   var parentBlock = document.getElementById(parentFieldId);
    if (fieldValue.length == 0) {
+        renderAlert(parentBlock, fieldId, 'alert_'+parentFieldId);
         return []
    }
    var a = document.createElement('a');
@@ -70,44 +77,37 @@ function getFieldValue(fieldId) {
         return fieldValue.split('&');
 }
 
-function checkUtm() {
-   var expectedUtms = getFieldValue('expected_utm_field');
-   var actualUtms = getFieldValue('actual_utm_field');
+function checkArrays(expectedList, actualList) {
+    var status = true;
+    var notInExpectedList = [];
+    var notInActualList = [];
 
-   if (expectedUtms.length == 0 || actualUtms.length == 0) {
-        return {
-            'status': 'empty_fields',
-            'expected_length': expectedUtms.length,
-            'actual_length': actualUtms.length
-        }
-   }
 
-   if (!(expectedUtms.length === actualUtms.length)) {
-        return {
-            'status': 'not_equal_length',
-            'expected_count': expectedUtms.length,
-            'actual_count': actualUtms.length
-        }
+    for (var i = 0; i < expectedList.length; i++) {
+        if (!actualList.includes(expectedList[i])) {
+            notInActualList.push(expectedList[i]);
+        }
+    }
+
+    for (var i = 0; i < actualList.length; i++) {
+        if (!expectedList.includes(actualList[i])) {
+            notInExpectedList.push(actualList[i]);
+        }
+    }
+ 
+    if ((expectedList.length != actualList.length)) {
+        status = 'not_equal_length';
+    } else if ((notInExpectedList.length || notInActualList.length) > 0) {
+        status = false;
+    } else if ((expectedList.length && expectedList.length) == 0) {
+        status = 'emtpy'
     }
-
-    var compareResult = []; 
-    for (var i = 0; i < expectedUtms.length; i++) {
-        if (expectedUtms.includes(actualUtms[i])) continue;
-        compareResult.push(actualUtms[i]);
-    }
-
-    if (compareResult.length === 0) {
-        return {
-            'status': true
-        }
-    }
-
-    return {
-        'status': false,
-        'expected_utms': expectedUtms,
-        'actual_utms': actualUtms,
-        'compare_result': compareResult
-    }
+    console.log(status);
+    return {
+        'status': status,
+        'notInExpectedList': notInExpectedList,
+        'notInActualList': notInActualList
+    }
 }
 
 function renderItem(item, itemClass, itemId, parentItemId) {
@@ -120,10 +120,18 @@ function renderItem(item, itemClass, itemId, parentItemId) {
 
 function renderTextItems(item, parentItem, message, itemClass, itemId) {
     var resultItem = document.createElement(item);
-    resultItem.className = itemClass;
-    resultItem.id = itemId;
+    if (itemClass) resultItem.className = itemClass;
+    if (itemId) resultItem.id = itemId;
     parentItem.appendChild(resultItem);
     resultItem.appendChild(document.createTextNode(message));
+}
+
+function renderAlert(parentItem, inputId, alertId) {
+    message = 'Поле не должно быть пустым!';
+    itemClass = 'alert';
+    document.getElementById(inputId).setAttribute('alert-state', 'true');
+    renderTextItems('span', parentItem, message, itemClass, alertId);
+
 }
 
 function clearMessages() {
@@ -132,12 +140,12 @@ function clearMessages() {
         document.getElementById('content-block').removeChild(resultDiv);
     }
 
-    var expactedAlertMessage = document.getElementById('alert_exp');
-    if (expactedAlertMessage) {
-        document.getElementById('expected_block').removeChild(expactedAlertMessage);
+    var expectedAlertMessage = document.getElementById('alert_expected_block');
+    if (expectedAlertMessage) {
+        document.getElementById('expected_block').removeChild(expectedAlertMessage);
     }
 
-    var actualAlertMessage = document.getElementById('alert_act');
+    var actualAlertMessage = document.getElementById('alert_actual_block');
     if (actualAlertMessage) {
         document.getElementById('actual_block').removeChild(actualAlertMessage);
     }
@@ -151,12 +159,4 @@ function clearMessages() {
     if (actual_utm_field.getAttribute('alert-state') == 'true') {
         actual_utm_field.setAttribute('alert-state', 'false');
     }
-}
-
-function renderAlert(parentItem, inputId, alertId) {
-    message = 'Поле не должно быть пустым!';
-    itemClass = 'alert';
-    document.getElementById(inputId).setAttribute('alert-state', 'true');
-    renderTextItems('span', parentItem, message, itemClass, alertId);
-
 }
