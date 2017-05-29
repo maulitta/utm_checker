@@ -69,7 +69,9 @@ function getFieldValue(fieldId, parentFieldId) {
    var a = document.createElement('a');
    a.href = fieldValue;
    if (Boolean(a.search)) {
-        return a.search.slice(1).split('&');
+        var result = a.search.slice(1).split('&');
+        result.push(a.pathname)
+        return result
    }
    if (fieldValue.charAt(0) == '?') {
         fieldValue = fieldValue.slice(1);
